@@ -8,11 +8,6 @@ UPLOAD_POLICY_TEMPLATE=${UPLOAD_POLICY_TEMPLATE:-upload-policy.json.template}
 
 UPLOAD_CREDS_FILE=upload-credentials.json
 
-get_access_key() {
-  local readonly creds_file=$1
-  echo $(cat ${creds_file} | jq -r '.AccessKey.AccessKeyId')
-}
-
 delete_bucket() {
   local readonly s3_bucket=$1
   local readonly aws_region=$2
@@ -62,9 +57,40 @@ sleep_for() {
 make_bucket() {
   local readonly bucket=$1
   local readonly aws_region=$2
+  local readonly creds_file=$3
 
-  echo "Creating bucket: ${bucket}"
-  aws s3 mb s3://${bucket} --region ${aws_region}
+  if bucket_exists ${bucket} ${creds_file}; then
+    echo "Bucket ${bucket} already exists"
+  else
+    echo "Creating bucket: ${bucket}"
+    aws s3 mb s3://${bucket} --region ${aws_region}
+  fi
+}
+
+bucket_exists() {
+  local readonly bucket=$1
+  local readonly creds_file=$2
+
+  if [[ ! -f ${creds_file} ]]; then
+    return 1
+  fi
+
+  local readonly access_key=$(get_access_key ${creds_file})
+  local readonly secret_key=$(get_secret_key ${creds_file})
+
+  # return 0 for success, 1 for failure, so we can use this function in if statements
+  s3cmd --access_key=$access_key --secret_key=$secret_key ls s3://dstestbucket-20160912 && return 0
+  return 1
+}
+
+get_access_key() {
+  local readonly creds_file=$1
+  echo $(cat ${creds_file} | jq -r '.AccessKey.AccessKeyId')
+}
+
+get_secret_key() {
+  local readonly creds_file=$1
+  echo $(cat ${creds_file} | jq -r '.AccessKey.SecretAccessKey')
 }
 
 set_bucket_policy() {
