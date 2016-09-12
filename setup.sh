@@ -7,16 +7,12 @@
 
 set -euo pipefail
 
-BUCKET_NAME=dstestbucket-20160830
-IAM_USER_NAME=dstestuser-20160830
-
-REGION=eu-west-1
-POLICY_TEMPLATE=upload-policy.json.template
+source ./shared.sh
 
 main() {
-  make_bucket ${BUCKET_NAME}
-  set_bucket_policy ${BUCKET_NAME} ${IAM_USER_NAME}
-  output_credentials ${IAM_USER_NAME}
+  make_bucket ${BUCKET}
+  set_bucket_policy ${BUCKET} ${IAM_USER}
+  output_credentials ${IAM_USER}
   echo "Finished"
 }
 
