@@ -1,12 +1,16 @@
 # Shared environment variables and functions for S3 bucket setup/teardown
 
 BUCKET=${BUCKET:-dstestbucket-20160912}
-UPLOAD_IAM_USER=${UPLOAD_IAM_USER:-dstestuser-20160912}
+UPLOAD_IAM_USER=${UPLOAD_IAM_USER:-dstestupuser-20160912}
+DOWNLOAD_IAM_USER=${DOWNLOAD_IAM_USER:-dstestdownuser-20160912}
 
 REGION=${REGION:-eu-west-1}
-UPLOAD_POLICY_TEMPLATE=${UPLOAD_POLICY_TEMPLATE:-upload-policy.json.template}
+
+POLICY_TEMPLATE=${POLICY_TEMPLATE:-s3-policy.json.template}
+DOWNLOAD_POLICY_TEMPLATE=${DOWNLOAD_POLICY_TEMPLATE:-download-policy.json.template}
 
 UPLOAD_CREDS_FILE=upload-credentials.json
+DOWNLOAD_CREDS_FILE=download-credentials.json
 
 delete_bucket() {
   local readonly s3_bucket=$1
@@ -83,6 +87,11 @@ bucket_exists() {
   return 1
 }
 
+get_username() {
+  local readonly creds_file=$1
+  echo $(cat ${creds_file} | jq -r '.AccessKey.UserName')
+}
+
 get_access_key() {
   local readonly creds_file=$1
   echo $(cat ${creds_file} | jq -r '.AccessKey.AccessKeyId')
@@ -95,25 +104,16 @@ get_secret_key() {
 
 set_bucket_policy() {
   local readonly bucket=$1
-  local readonly user=$2
-  local readonly policy_template=$3
-  local readonly aws_region=$4
+  local readonly upload_user=$2
+  local readonly download_user=$3
+  local readonly policy_template=$4
+  local readonly aws_region=$5
 
-  create_user ${user} ${aws_region}
+  create_user ${upload_user} ${aws_region}
+  create_user ${download_user} ${aws_region}
   sleep_for 15 # without this, we get "An error occurred (MalformedPolicy) when calling the PutBucketPolicy operation: Invalid principal in policy"
   # TODO: replace this sleep with a loop that waits until the user information can be retrieved
-  add_bucket_policy ${bucket} ${user} ${policy_template} ${aws_region}
-}
-
-output_credentials() {
-  local readonly user=$1
-  local readonly aws_region=$2
-  local readonly creds_file=$3
-
-  echo "AWS USER CREDENTIALS....................."
-  aws iam create-access-key --user-name ${user} --region ${aws_region} | tee ${creds_file}
-  echo "THESE ARE NOW STORED IN THE FILE: ${creds_file}"
-  echo "PLEASE TAKE APPROPRIATE PRECAUTIONS TO SECURE THESE."
+  add_bucket_policy ${bucket} ${upload_user} ${download_user} ${policy_template} ${aws_region}
 }
 
 create_user() {
@@ -126,14 +126,28 @@ create_user() {
 
 add_bucket_policy() {
   export bucket=$1
-  local readonly user=$2
-  local readonly policy_template=$3
-  local readonly aws_region=$4
+  local readonly upload_user=$2
+  local readonly download_user=$3
+  local readonly policy_template=$4
+  local readonly aws_region=$5
 
-  export user_arn=$(get_user_arn ${user} ${aws_region})
+  export upload_user_arn=$(get_user_arn ${upload_user} ${aws_region})
+  export download_user_arn=$(get_user_arn ${download_user} ${aws_region})
+
   echo "Applying bucket policy"
   cat ${policy_template} | envsubst > /tmp/policy.json
   aws s3api put-bucket-policy --bucket ${bucket} --region ${aws_region} --policy file:///tmp/policy.json
+}
+
+output_credentials() {
+  local readonly user=$1
+  local readonly aws_region=$2
+  local readonly creds_file=$3
+
+  echo "\nAWS USER CREDENTIALS....................."
+  aws iam create-access-key --user-name ${user} --region ${aws_region} | tee ${creds_file}
+  echo "THESE ARE NOW STORED IN THE FILE: ${creds_file}"
+  echo "PLEASE TAKE APPROPRIATE PRECAUTIONS TO SECURE THESE."
 }
 
 get_user_arn() {
