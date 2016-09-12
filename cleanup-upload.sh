@@ -7,8 +7,8 @@ main() {
 
   delete_bucket ${BUCKET} ${REGION}
   # You must delete the user's credentials before you can delete the user
-  delete_user_credentials ${IAM_USER} ${access_key} ${REGION}
-  delete_user ${IAM_USER} ${REGION}
+  delete_user_credentials ${UPLOAD_IAM_USER} ${access_key} ${REGION}
+  delete_user ${UPLOAD_IAM_USER} ${REGION}
   remove_credentials_file ${UPLOAD_CREDS_FILE}
   echo "Finished"
 }

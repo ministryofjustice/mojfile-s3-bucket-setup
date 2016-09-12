@@ -13,8 +13,8 @@ source ./shared.sh
 
 main() {
   make_bucket ${BUCKET} ${REGION}
-  set_bucket_policy ${BUCKET} ${IAM_USER} ${UPLOAD_POLICY_TEMPLATE} ${REGION}
-  output_credentials ${IAM_USER} ${REGION} ${UPLOAD_CREDS_FILE}
+  set_bucket_policy ${BUCKET} ${UPLOAD_IAM_USER} ${UPLOAD_POLICY_TEMPLATE} ${REGION}
+  output_credentials ${UPLOAD_IAM_USER} ${REGION} ${UPLOAD_CREDS_FILE}
   echo "Finished"
 }
 
