@@ -157,3 +157,17 @@ get_user_arn() {
   aws iam get-user --user-name ${user} --region ${aws_region} | jq -r '.User.Arn'
 }
 
+teardown_user() {
+  local readonly creds_file=$1
+  local readonly aws_region=$2
+
+  local readonly user=$(get_username ${creds_file})
+  local readonly access_key=$(get_access_key ${creds_file})
+
+  # # You must delete the user's credentials before you can delete the user
+  delete_user_credentials ${user} ${access_key} ${aws_region}
+  delete_user ${user} ${aws_region}
+
+  remove_credentials_file ${creds_file}
+}
+
