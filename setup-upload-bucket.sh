@@ -33,7 +33,7 @@ set_bucket_policy() {
   local readonly aws_region=$4
 
   create_user ${user} ${aws_region}
-  sleep 15 # without this, we get "An error occurred (MalformedPolicy) when calling the PutBucketPolicy operation: Invalid principal in policy"
+  sleep_for 15 # without this, we get "An error occurred (MalformedPolicy) when calling the PutBucketPolicy operation: Invalid principal in policy"
   # TODO: replace this sleep with a loop that waits until the user information can be retrieved
   add_bucket_policy ${bucket} ${user} ${policy_template} ${aws_region}
 }

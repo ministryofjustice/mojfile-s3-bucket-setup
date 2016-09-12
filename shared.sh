@@ -48,3 +48,14 @@ remove_credentials_file() {
   rm ${creds_file}
 }
 
+sleep_for() {
+  local readonly seconds=${1:-10}
+
+  echo "Sleeping for ${seconds} seconds"
+  for i in $(seq 1 ${seconds}); do
+    printf "."
+    sleep 1
+  done
+  printf "\n"
+}
+
