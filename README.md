@@ -1,6 +1,6 @@
 # Setup Amazon S3 for the File Upload & Download APIs
 
-Create an S3 bucket, IAM users and security policy for the file upload and download APIs.
+Create an S3 bucket, IAM users and security policy for the file [upload](https://github.com/ministryofjustice/s3-uploader-prototype/) and download APIs.
 
 Although, in theory, the file upload and download APIs could be used separatedly, S3 only
 allows a single security policy on an S3 bucket. So, this project assumes that both the
