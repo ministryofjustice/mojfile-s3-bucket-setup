@@ -114,7 +114,6 @@ get_user_arn() {
   local readonly user=$1
   local readonly aws_region=$2
 
-  # Note, this echoes '"value"' not 'value' - i.e. including the double-quotes
-  aws iam get-user --user-name ${user} --region ${aws_region} | jq '.User.Arn'
+  aws iam get-user --user-name ${user} --region ${aws_region} | jq -r '.User.Arn'
 }
 
