@@ -3,7 +3,7 @@
 source ./shared.sh
 
 main() {
-  local readonly access_key=$(cat ${UPLOAD_CREDS_FILE} | jq -r '.AccessKey.AccessKeyId')
+  local readonly access_key=$(get_access_key ${UPLOAD_CREDS_FILE})
 
   delete_bucket ${BUCKET} ${REGION}
   # You must delete the user's credentials before you can delete the user
@@ -11,6 +11,11 @@ main() {
   delete_user ${IAM_USER} ${REGION}
   remove_credentials_file ${UPLOAD_CREDS_FILE}
   echo "Finished"
+}
+
+get_access_key() {
+  local readonly creds_file=$1
+  echo $(cat ${creds_file} | jq -r '.AccessKey.AccessKeyId')
 }
 
 delete_bucket() {
