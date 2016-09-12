@@ -2,7 +2,7 @@
 
 source ./shared.sh
 
-ACCESS_KEY_ID=AKIAJYPWSHPUWLED4W6Q
+ACCESS_KEY_ID=AKIAJKWDW3X6IMA3B3TA
 
 main() {
   aws s3 rb s3://${BUCKET} --region ${REGION}
