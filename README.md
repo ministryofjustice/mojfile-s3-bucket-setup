@@ -1,6 +1,7 @@
 # Setup Amazon S3 for the File Upload & Download APIs
 
-Create an S3 bucket, IAM users and security policy for the file [upload](https://github.com/ministryofjustice/s3-uploader-prototype/) and download APIs.
+Create an S3 bucket, IAM users and security and lifecycle policies for the file
+[upload](https://github.com/ministryofjustice/s3-uploader-prototype/) and download APIs.
 
 Although, in theory, the file upload and download APIs could be used separatedly, S3 only
 allows a single security policy on an S3 bucket. So, this project assumes that both the
@@ -10,6 +11,11 @@ accordingy.
 A single S3 bucket is created, plus 2 IAM users (one for uploading, and another for
 downloading). If you really only want either the upload or download component, edit
 the setup/teardown scripts as required.
+
+The default lifecycle policy is for all objects in the bucket to be automatically deleted
+60 days after they are added to the bucket. This is defined in `lifecycle.json`
+If you do not want to apply a lifecycle policy (i.e. you want to keep objects indefinitely)
+then comment out the `apply_lifecycle_policy` call in `setup-bucket.sh`
 
 ## Pre-requisites
 * AWS command-line tool, with valid credentials in ~/.aws/credentials
