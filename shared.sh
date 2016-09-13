@@ -4,6 +4,7 @@ BUCKET=${BUCKET:-dstestbucket-20160912}
 REGION=${REGION:-eu-west-1}
 
 POLICY_TEMPLATE=${POLICY_TEMPLATE:-s3-policy.json.template}
+LIFECYCLE_POLICY=${LIFECYCLE_POLICY:-lifecycle.json}
 
 UPLOAD_IAM_USER=${UPLOAD_IAM_USER:-dstestupuser-20160912}
 UPLOAD_CREDS_FILE=upload-credentials.json
@@ -169,7 +170,7 @@ add_bucket_policy() {
   export upload_user_arn=$(get_user_arn ${upload_user} ${aws_region})
   export download_user_arn=$(get_user_arn ${download_user} ${aws_region})
 
-  echo "Applying bucket policy"
+  echo "Applying bucket security policy"
   cat ${policy_template} | envsubst > /tmp/policy.json
   aws s3api put-bucket-policy --bucket ${bucket} --region ${aws_region} --policy file:///tmp/policy.json
 }
@@ -204,5 +205,14 @@ teardown_user() {
   delete_user ${user} ${aws_region}
 
   remove_credentials_file ${creds_file}
+}
+
+apply_lifecycle_policy() {
+  local readonly bucket=$1
+  local readonly aws_region=$2
+  local readonly policy_file=$3
+
+  echo "Applying bucket lifecycle policy"
+  aws --region=${aws_region} s3api put-bucket-lifecycle --bucket ${bucket} --lifecycle-configuration file://${policy_file}
 }
 
