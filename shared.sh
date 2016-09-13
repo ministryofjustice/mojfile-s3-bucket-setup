@@ -1,16 +1,51 @@
 # Shared environment variables and functions for S3 bucket setup/teardown
 
 BUCKET=${BUCKET:-dstestbucket-20160912}
-UPLOAD_IAM_USER=${UPLOAD_IAM_USER:-dstestupuser-20160912}
-DOWNLOAD_IAM_USER=${DOWNLOAD_IAM_USER:-dstestdownuser-20160912}
-
 REGION=${REGION:-eu-west-1}
 
 POLICY_TEMPLATE=${POLICY_TEMPLATE:-s3-policy.json.template}
-DOWNLOAD_POLICY_TEMPLATE=${DOWNLOAD_POLICY_TEMPLATE:-download-policy.json.template}
 
+UPLOAD_IAM_USER=${UPLOAD_IAM_USER:-dstestupuser-20160912}
 UPLOAD_CREDS_FILE=upload-credentials.json
+DOWNLOAD_IAM_USER=${DOWNLOAD_IAM_USER:-dstestdownuser-20160912}
 DOWNLOAD_CREDS_FILE=download-credentials.json
+
+check_prerequisites() {
+  for program in jq aws envsubst; do
+    if ! is_installed ${program}; then
+      die_with_message "FAILURE: ${program} is not installed. Exiting."
+    fi
+  done
+
+  if ! validate_aws_credentials; then
+    die_with_message "FAILURE: Valid AWS credentials are not configured. Exiting."
+  fi
+
+  if [ ! -f ${POLICY_TEMPLATE} ]; then
+    die_with_message "FAILURE: ${POLICY_TEMPLATE} not found. Exiting."
+  fi
+}
+
+is_installed() {
+  local readonly program=$1
+
+  if [ $(which ${program}) ]; then
+    return 0 # success
+  else
+    return 1 # failure
+  fi
+}
+
+validate_aws_credentials() {
+  aws iam get-user --region=${REGION} >/dev/null && return 0 # success
+  return 1 # failure
+}
+
+die_with_message() {
+  local readonly message=$1
+  echo ${message}
+  exit 1
+}
 
 delete_bucket() {
   local readonly s3_bucket=$1

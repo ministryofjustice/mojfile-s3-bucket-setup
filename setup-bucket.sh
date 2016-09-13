@@ -12,6 +12,7 @@ set -euo pipefail
 source ./shared.sh
 
 main() {
+  check_prerequisites
   make_bucket ${BUCKET} ${REGION} ${UPLOAD_CREDS_FILE}
   set_bucket_policy ${BUCKET} ${UPLOAD_IAM_USER} ${DOWNLOAD_IAM_USER} ${POLICY_TEMPLATE} ${REGION}
   output_credentials ${UPLOAD_IAM_USER}   ${REGION} ${UPLOAD_CREDS_FILE}
