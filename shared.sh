@@ -1,14 +1,15 @@
 # Shared environment variables and functions for S3 bucket setup/teardown
 
-BUCKET=${BUCKET:-dstestbucket-20160912}
+BUCKET=${BUCKET:-dstestbucket-20170116}
 REGION=${REGION:-eu-west-1}
 
 POLICY_TEMPLATE=${POLICY_TEMPLATE:-s3-policy.json.template}
+USER_SESSIONS_POLICY_TEMPLATE=${POLICY_TEMPLATE:-s3-user-sessions-policy.json.template}
 LIFECYCLE_POLICY=${LIFECYCLE_POLICY:-lifecycle.json}
 
-UPLOAD_IAM_USER=${UPLOAD_IAM_USER:-dstestupuser-20160912}
+UPLOAD_IAM_USER=${UPLOAD_IAM_USER:-dstestupuser-20170116}
 UPLOAD_CREDS_FILE=upload-credentials.json
-DOWNLOAD_IAM_USER=${DOWNLOAD_IAM_USER:-dstestdownuser-20160912}
+DOWNLOAD_IAM_USER=${DOWNLOAD_IAM_USER:-dstestdownuser-20170116}
 DOWNLOAD_CREDS_FILE=download-credentials.json
 
 check_prerequisites() {
@@ -119,7 +120,7 @@ bucket_exists() {
   local readonly secret_key=$(get_secret_key ${creds_file})
 
   # return 0 for success, 1 for failure, so we can use this function in if statements
-  s3cmd --access_key=$access_key --secret_key=$secret_key ls s3://dstestbucket-20160912 && return 0
+  s3cmd --access_key=$access_key --secret_key=$secret_key ls s3://${bucket} && return 0
   return 1
 }
 
@@ -180,7 +181,8 @@ output_credentials() {
   local readonly aws_region=$2
   local readonly creds_file=$3
 
-  echo "\nAWS USER CREDENTIALS....................."
+  echo
+  echo "AWS USER CREDENTIALS....................."
   aws iam create-access-key --user-name ${user} --region ${aws_region} | tee ${creds_file}
   echo "THESE ARE NOW STORED IN THE FILE: ${creds_file}"
   echo "PLEASE TAKE APPROPRIATE PRECAUTIONS TO SECURE THESE."

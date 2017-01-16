@@ -13,12 +13,22 @@ source ./shared.sh
 
 main() {
   check_prerequisites
+  make_filestore_bucket
+  make_dload_user_sessions_bucket
+}
+
+make_filestore_bucket() {
   make_bucket ${BUCKET} ${REGION} ${UPLOAD_CREDS_FILE}
   set_bucket_policy ${BUCKET} ${UPLOAD_IAM_USER} ${DOWNLOAD_IAM_USER} ${POLICY_TEMPLATE} ${REGION}
   apply_lifecycle_policy ${BUCKET} ${REGION} ${LIFECYCLE_POLICY}
   output_credentials ${UPLOAD_IAM_USER}   ${REGION} ${UPLOAD_CREDS_FILE}
   output_credentials ${DOWNLOAD_IAM_USER} ${REGION} ${DOWNLOAD_CREDS_FILE}
   echo "Finished"
+}
+
+make_dload_user_sessions_bucket() {
+  make_bucket ${BUCKET}-users ${REGION} ${DOWNLOAD_CREDS_FILE}
+  add_bucket_policy ${BUCKET} ${UPLOAD_IAM_USER} ${DOWNLOAD_IAM_USER} ${USER_SESSIONS_POLICY_TEMPLATE} ${REGION}
 }
 
 main
