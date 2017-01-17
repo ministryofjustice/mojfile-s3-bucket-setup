@@ -1,0 +1,12 @@
+{
+  "Rules": [
+    {
+      "ID": "Delete objects older than 1 day",
+      "Prefix": "",
+      "Status": "Enabled",
+      "Expiration": {
+        "Days": 1
+      }
+    }
+  ]
+}
