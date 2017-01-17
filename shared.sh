@@ -1,6 +1,6 @@
 # Shared environment variables and functions for S3 bucket setup/teardown
 
-REVISION=$(git rev-parse --short @)
+REVISION=${REVISION:-$(git rev-parse --short @)}
 BUCKET=${BUCKET:-tax-tribunals-downloader-test-${REVISION}}
 USER_BUCKET=${USER_BUCKET:-tax-tribunals-downloader-user-sessions-test-${REVISION}}
 REGION=${REGION:-eu-west-1}
