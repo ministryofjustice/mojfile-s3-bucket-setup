@@ -1,3 +1,4 @@
 tags
 .ctags_exclude
 upload-credentials.json
+download-credentials.json
