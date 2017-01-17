@@ -24,7 +24,7 @@ then comment out the `apply_lifecycle_policy` call in `setup-bucket.sh`
 
 ## Setup
 * Edit `shared.sh` to set the appropriate values (unless you plan to override them on the command line)
-* Run `./setup-bucket.sh` (overriding any environment variables, as you wish)
+* Run `./setup.sh` (overriding any environment variables, as you wish)
 
 After the script finishes, it will display two sets of S3 credentials for your application, and will also record them in json files.
 
@@ -36,7 +36,7 @@ In this case, run the `teardown-bucket.sh` script and try again.
 
 ## Teardown
 * Edit `shared.sh` to set the appropriate values (unless you plan to override them on the command line)
-* Run `teardown-bucket.sh` (overriding any environment variables, as you wish)
+* Run `teardown.sh` (overriding any environment variables, as you wish)
 
 WARNING: This deletes the users, credentials and S3 bucket - ensure you really want this before running the script.
 
