@@ -3,7 +3,7 @@ delete_bucket() {
 
   if bucket_exists ${bucket}; then
     echo "Delete bucket ${bucket}............"
-    aws s3api delete-bucket --bucket ${bucket}
+    aws s3 rb s3://${bucket} --force
   else
     echo "Bucket ${bucket} already deleted"
   fi
