@@ -42,9 +42,20 @@ create_access_key() {
 
   if access_key_exists ${user}; then
     echo "Access key for user ${user} already exists"
+    echo "*** If you need new keys, you will either need to teardown and setup again, or add them manually."
   else
     echo "Creating access key for user: ${user}"
-    aws iam create-access-key --user-name ${user} 2>&1 > /dev/null
+    echo
+    echo
+    echo "KEYS FOR ${user}............."
+    echo "NOTE: This is the ONLY time you will see AWS_SECRET_ACCESS_KEY"
+    echo "Use the following exports for access in your dev environment:"
+    echo
+    echo
+    aws iam create-access-key --user-name ${user} |
+      jq -r '"export AWS_SECRET_ACCESS_KEY=" + .AccessKey.SecretAccessKey, "export AWS_ACCESS_KEY_ID=" + .AccessKey.AccessKeyId'
+    echo
+    echo
   fi
 }
 

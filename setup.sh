@@ -23,6 +23,7 @@ main() {
   create_user ${DOWNLOAD_IAM_USER} ${REGION}
   create_access_key ${UPLOAD_IAM_USER}
   create_access_key ${DOWNLOAD_IAM_USER}
+  sleep_for 15 # Keep the policy step from breaking.
   set_bucket_policy ${BUCKET} ${UPLOAD_IAM_USER} ${DOWNLOAD_IAM_USER} ${POLICY_TEMPLATE} ${REGION}
   set_bucket_policy ${USER_BUCKET} ${UPLOAD_IAM_USER} ${DOWNLOAD_IAM_USER} ${POLICY_TEMPLATE} ${REGION}
   apply_lifecycle_policy ${BUCKET} ${REGION} ${LIFECYCLE_POLICY}

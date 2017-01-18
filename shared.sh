@@ -76,6 +76,7 @@ output_credentials() {
 
   echo
   echo "AWS USER CREDENTIALS FOR ${user}:"
+  echo "*** These DO NOT contain the AWS secret key. This will only be shown when you first create the key."
   aws iam list-access-keys --user-name ${user} | tee ${creds_file}
   echo "THESE ARE NOW STORED IN THE FILE: ${creds_file}"
   echo "PLEASE TAKE APPROPRIATE PRECAUTIONS TO SECURE THESE."
